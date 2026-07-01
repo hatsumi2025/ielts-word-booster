@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS 6.5 Vocabulary Daily Booster</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+        }
+        /* 読み上げハイライト時のアニメーションスタイル */
+        .highlight-active {
+            animation: pulse-highlight 2s infinite;
+        }
+        @keyframes pulse-highlight {
+            0%, 100% { background-color: rgba(254, 240, 138, 0.4); } /* yellow-200 */
+            50% { background-color: rgba(254, 240, 138, 0.8); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-12">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md py-6 px-4 mb-8">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold tracking-tight flex items-center gap-2">
+                    <i data-lucide="graduation-cap" class="w-8 h-8"></i>
+                    IELTS 6.5 Daily Vocabulary Booster
+                </h1>
+                <p class="text-indigo-100 text-sm mt-1">毎日の5単語を音声とインタラクティブ機能で完全にマスター</p>
+            </div>
+            <div class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+                <i data-lucide="calendar" class="w-4 h-4 text-purple-200"></i>
+                <span id="today-date" class="font-medium">2026/07/01</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 space-y-8">
+        
+        <!-- 貼り付け入力 & 管理エリア -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i data-lucide="clipboard-paste" class="text-indigo-500 w-5 h-5"></i>
+                    毎朝のテキストを読み込む
+                </h2>
+                <button id="toggle-input-btn" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1 font-medium transition">
+                    <span>入力を開く/閉じる</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 transition-transform" id="input-arrow"></i>
+                </button>
+            </div>
+            
+            <div id="input-area" class="transition-all duration-300 space-y-4">
+                <p class="text-xs text-slate-500 leading-relaxed">
+                    毎朝送られてくる「IELTS 6.5 Vocabulary」のテキストをそのまま下に貼り付けて「データを更新」ボタンを押してください。<br>
+                    <span class="text-indigo-600 font-semibold">★ マークダウン記号（**や##など）や不要な繰り返し注釈、末尾のシステム警告分は自動で除外されて綺麗に読み込まれます！</span>
+                </p>
+                <textarea id="raw-text-input" class="w-full h-48 p-4 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono" placeholder="ここに毎朝のアウトプットテキストを貼り付けてください..."></textarea>
+                <div class="flex justify-end gap-2 flex-wrap">
+                    <!-- 前のテキストを消すクリアボタン -->
+                    <button id="clear-text-btn" class="px-4 py-2 text-xs border border-rose-200 hover:bg-rose-50 rounded-lg text-rose-600 transition font-medium flex items-center gap-1 shadow-sm">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        入力をクリア
+                    </button>
+                    <!-- Day 9 テストデータセット用 -->
+                    <button id="load-day9-btn" class="px-4 py-2 text-xs border border-amber-200 hover:bg-amber-50 rounded-lg text-amber-700 transition font-medium flex items-center gap-1 shadow-sm" title="マークダウン等が含まれたDay 9データを入力欄にセットします">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        新テキスト（Day 9）をセット
+                    </button>
+                    <button id="load-default-btn" class="px-4 py-2 text-xs border border-slate-200 hover:bg-slate-50 rounded-lg text-slate-600 transition font-medium">
+                        デフォルト（Day 1）をセット
+                    </button>
+                    <button id="process-text-btn" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        データを更新
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- オートプレイヤー（連続音声再生パネル） -->
+        <section class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl p-6 shadow-md">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-white/20 text-white text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-red-400 animate-ping"></span>
+                            FULL FLOW
+                        </span>
+                        <h2 class="text-xl font-bold flex items-center gap-2">
+                            <i data-lucide="play-circle"></i>
+                            オートプレイ（一気見予習 ➔ 詳細学習）
+                        </h2>
+                    </div>
+                    <p class="text-emerald-50 text-sm">
+                        最初に<strong>5つの単語・日本語訳をテンポよく予習</strong>したあと、<strong>「単語 ➔ 定義 ➔ 日本語訳 ➔ 例文」</strong>の順に1単語ずつじっくり進めます。
+                    </p>
+                </div>
+                <!-- プレイヤーボタン類 -->
+                <div class="flex items-center gap-2 bg-emerald-700/30 p-2 rounded-xl border border-emerald-400/20 self-start md:self-auto">
+                    <button id="autoplay-play-btn" class="px-5 py-2.5 bg-white text-emerald-700 hover:bg-emerald-50 rounded-lg font-bold text-sm flex items-center gap-2 transition shadow-sm">
+                        <i data-lucide="play" class="w-4 h-4 fill-emerald-700"></i>
+                        連続再生スタート
+                    </button>
+                    <button id="autoplay-pause-btn" class="hidden px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-bold text-sm flex items-center gap-2 transition shadow-sm">
+                        <i data-lucide="pause" class="w-4 h-4 fill-white"></i>
+                        一時停止
+                    </button>
+                    <button id="autoplay-stop-btn" class="p-2.5 bg-emerald-800/50 hover:bg-emerald-800 text-white rounded-lg transition" title="停止・リセット">
+                        <i data-lucide="square" class="w-4 h-4 fill-white"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 再生ステータス表示 -->
+            <div id="autoplay-status-bar" class="hidden mt-4 pt-4 border-t border-emerald-400/30">
+                <div class="flex justify-between text-xs text-emerald-100 mb-1.5">
+                    <span id="autoplay-current-step" class="font-medium">準備中...</span>
+                    <span id="autoplay-percentage" class="font-bold">0%</span>
+                </div>
+                <div class="w-full bg-emerald-800/40 rounded-full h-2 overflow-hidden">
+                    <div id="autoplay-progress-indicator" class="bg-white h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- メインの学習カード -->
+        <section>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                    <i data-lucide="book-open" class="text-indigo-500"></i>
+                    Word Study Cards
+                </h2>
+                <span class="text-xs text-slate-400">※カードごとの個別再生も可能です</span>
+            </div>
+
+            <!-- カードコンテナ -->
+            <div id="cards-container" class="space-y-6">
+                <!-- JavaScriptで動的生成されます -->
+            </div>
+        </section>
+
+        <!-- クイックレビュー（テーブル） -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 overflow-hidden">
+            <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <i data-lucide="table-properties" class="text-indigo-500"></i>
+                Quick Review
+            </h2>
+            <div class="overflow-x-auto rounded-xl border border-slate-100">
+                <table class="w-full border-collapse text-left text-sm">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-100 text-slate-600 font-semibold">
+                            <th class="py-3 px-4">Word (単語)</th>
+                            <th class="py-3 px-4">品詞</th>
+                            <th class="py-3 px-4">日本語 (意味)</th>
+                            <th class="py-3 px-4 text-center">音声</th>
+                        </tr>
+                    </thead>
+                    <tbody id="review-table-body" class="divide-y divide-slate-100 text-slate-700">
+                        <!-- JavaScriptで動的生成されます -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ミニチャレンジ（作文） -->
+        <section class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-2xl p-6 md:p-8 shadow-md relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 opacity-10">
+                <i data-lucide="brain-circuit" class="w-48 h-48"></i>
+            </div>
+            
+            <div class="relative z-10">
+                <span class="bg-indigo-500/30 text-indigo-300 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full">
+                    Mini Challenge
+                </span>
+                
+                <h2 class="text-2xl font-bold mt-3 mb-2 flex items-center gap-2">
+                    <i data-lucide="pen-tool" class="text-indigo-400"></i>
+                    英語を作ってみましょう！
+                </h2>
+                
+                <!-- お題日本語 -->
+                <div class="bg-white/5 border border-white/10 rounded-xl p-4 my-4">
+                    <p class="text-sm text-slate-300 mb-1">日本語のお題：</p>
+                    <p class="text-lg font-medium text-slate-100" id="challenge-japanese-prompt">
+                        「教育への投資は、長期的な経済成長を維持するのに役立つ。」
+                    </p>
+                </div>
+
+                <!-- ユーザー回答フォーム -->
+                <div class="space-y-3">
+                    <label class="block text-xs text-slate-300 font-medium">あなたの解答：</label>
+                    <textarea id="user-answer" class="w-full h-24 bg-white/10 border border-white/20 focus:border-indigo-400 rounded-xl p-3 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 text-base" placeholder="ここに英語の文章を入力してください..."></textarea>
+                    
+                    <div class="flex justify-between items-center flex-wrap gap-2">
+                        <p class="text-xs text-slate-400" id="hint-text">ヒント: <span>sustain</span> を使ってみましょう。</p>
+                        <div class="flex gap-2">
+                            <button id="show-hint-btn" class="px-4 py-2 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg font-medium transition">
+                                最初の1文字ヒント
+                            </button>
+                            <button id="submit-answer-btn" class="px-6 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-medium text-sm flex items-center gap-2 transition shadow-lg shadow-indigo-500/20">
+                                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                                解答をチェック
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 結果表示 -->
+                <div id="result-box" class="hidden mt-6 bg-white/5 border border-white/10 rounded-xl p-5 space-y-4">
+                    <div class="flex items-center gap-2" id="result-status-header">
+                        <!-- 動的に判定マークとテキストが入ります -->
+                    </div>
+
+                    <!-- スコア/類似度 -->
+                    <div class="flex items-center justify-between bg-white/5 p-3 rounded-lg text-sm">
+                        <span>フレーズマッチング度:</span>
+                        <span id="similarity-score" class="font-bold text-lg text-indigo-300">0%</span>
+                    </div>
+
+                    <!-- 模範解答 -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-indigo-300 font-bold tracking-wider">MODEL ANSWER (模範解答)</span>
+                            <button id="play-model-ans-btn" class="p-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-white transition flex items-center gap-1 text-xs">
+                                <i data-lucide="volume-2" class="w-3.5 h-3.5"></i> 読み上げ
+                            </button>
+                        </div>
+                        <p class="text-lg font-semibold text-emerald-400" id="model-answer-text">
+                            Investing in education helps to sustain long-term economic growth.
+                        </p>
+                        <p class="text-sm text-slate-300" id="model-translation-text">
+                            (教育への投資は、長期的な経済成長を維持するのに役立つ。)
+                        </p>
+                    </div>
+
+                    <!-- 解説フィードバック -->
+                    <div class="text-sm text-slate-300 pt-2 border-t border-white/10">
+                        <span class="font-bold text-indigo-300 block mb-1">💡 フィードバック・学習のポイント:</span>
+                        <ul class="list-disc pl-5 space-y-1 text-xs text-slate-400" id="feedback-points">
+                            <li>「～への投資」は "Investment in ~" または動名詞 "Investing in ~" が自然です。</li>
+                            <li>「～するのに役立つ」は "helps to [動詞]" または "helps [動詞]" の形を使います。</li>
+                            <li>「長期的な経済成長」は "long-term economic growth" と表現します。</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- フィードバック通知 (Toast) -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-800 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 translate-y-20 opacity-0 transition-all duration-300 z-50 text-sm">
+        <i data-lucide="info" class="w-4 h-4 text-indigo-400" id="toast-icon"></i>
+        <span id="toast-message">メッセージ</span>
+    </div>
+
+    <!-- JavaScript ロジック -->
+    <script>
+        // 初期のデータ構造（Day 1）
+        let appData = {
+            date: "IELTS 6.5 Vocabulary (5 Words)",
+            words: [
+                {
+                    id: 1,
+                    word: "Allocate",
+                    pos: "verb",
+                    meaning: "to distribute or assign resources for a particular purpose",
+                    example: "The government allocated more funding to improve public transportation.",
+                    japanese: "政府は公共交通機関を改善するために、より多くの資金を割り当てた。"
+                },
+                {
+                    id: 2,
+                    word: "Conventional",
+                    pos: "adjective",
+                    meaning: "following traditional or commonly accepted methods",
+                    example: "Many companies still rely on conventional marketing strategies.",
+                    japanese: "多くの企業は依然として従来型のマーケティング戦略に依存している。"
+                },
+                {
+                    id: 3,
+                    word: "Significant",
+                    pos: "adjective",
+                    meaning: "important or large enough to have an effect",
+                    example: "There has been a significant increase in online learning over the past decade.",
+                    japanese: "過去10年間でオンライン学習は大幅に増加した。"
+                },
+                {
+                    id: 4,
+                    word: "Sustain",
+                    pos: "verb",
+                    meaning: "to maintain or continue over a period of time",
+                    example: "It is difficult to sustain economic growth without innovation.",
+                    japanese: "イノベーションなしで経済成長を維持することは難しい。"
+                },
+                {
+                    id: 5,
+                    word: "Diverse",
+                    pos: "adjective",
+                    meaning: "including many different types of people or things",
+                    example: "The city is known for its diverse cultural background.",
+                    japanese: "その都市は多様な文化的背景で知られている。"
+                }
+            ],
+            quickReview: [
+                { word: "allocate", pos: "動詞", meaning: "割り当てる" },
+                { word: "conventional", pos: "形容詞", meaning: "従来の" },
+                { word: "significant", pos: "形容詞", meaning: "重要な・大幅な" },
+                { word: "sustain", pos: "動詞", meaning: "維持する" },
+                { word: "diverse", pos: "形容詞", meaning: "多様な" }
+            ],
+            challenge: {
+                prompt: "教育への投資は、長期的な経済成長を維持するのに役立つ。",
+                model: "Investing in education helps to sustain long-term economic growth.",
+                hintWord: "sustain"
+            }
+        };
+
+        // デフォルトのテキスト（Day 1）
+        const defaultRawText = `IELTS 6.5 Vocabulary (5 Words)
+1. Allocate (verb)
+Meaning: to distribute or assign resources for a particular purpose
+Example: The government allocated more funding to improve public transportation.
+日本語: 政府は公共交通機関を改善するために、より多くの資金を割り当てた。
+2. Conventional (adjective)
+Meaning: following traditional or commonly accepted methods
+Example: Many companies still rely on conventional marketing strategies.
+日本語: 多くの企業は依然として従来型のマーケティング戦略に依存している。
+3. Significant (adjective)
+Meaning: important or large enough to have an effect
+Example: There has been a significant increase in online learning over the past decade.
+日本語: 過去10年間でオンライン学習は大幅に増加した。
+4. Sustain (verb)
+Meaning: to maintain or continue over a period of time
+Example: It is difficult to sustain economic growth without innovation.
+日本語: イノベーションなしで経済成長を維持することは難しい。
+5. Diverse (adjective)
+Meaning: including many different types of people or things
+Example: The city is known for its diverse cultural background.
+日本語: その都市は多様な文化的背景で知られている。
+Quick Review
+Word品詞日本語allocate動詞割り当てるconventional形容詞従来のsignificant形容詞重要な・大幅なsustain動詞維持するdiverse形容詞多様な
+Mini Challenge:
+
+次の英文を英語で作ってみましょう。
+
+「教育への投資は、長期的な経済成長を維持するのに役立つ。」`;
+
+        // マークダウン形式を含んだDay 9のリアルなテキスト
+        const day9Text = `IELTS 6.5 Vocabulary (Day 9)
+
+#### 1. **Allocate** *(verb)* *(Note: already used ადრე? We must avoid repeats.)*
+
+Let's use **Allocate** was used on Day 1, so instead:
+
+#### 1. **Implication** *(noun)*
+
+**Meaning:** a possible effect or consequence of an action or decision; something that is suggested but not directly stated
+**Example:** The study discusses the implications of artificial intelligence for the future of work.
+**日本語:** その研究は、人工知能が将来の働き方に与える影響について論じている。
+
+---
+
+#### 2. **Preserve** *(verb)*
+
+**Meaning:** to protect something and keep it in its original condition
+**Example:** Governments should preserve historical buildings for future generations.
+**日本語:** 政府は将来の世代のために歴史的建造物を保存すべきである。
+
+---
+
+#### 3. **Alternative** *(noun / adjective)*
+
+**Meaning:** another option or choice instead of the usual one
+**Example:** Many people are looking for alternative sources of energy.
+**日本語:** 多くの人が代替エネルギー源を探している。
+
+---
+
+#### 4. **Efficient** *(adjective)*
+
+**Meaning:** working well without wasting time, money, or energy
+**Example:** Public transportation is often a more efficient way to travel in large cities.
+**日本語:** 大都市では、公共交通機関はより効率的な移動手段であることが多い。
+
+---
+
+#### 5. **Trend** *(noun)*
+
+**Meaning:** a general direction in which something is developing or changing
+**Example:** One noticeable trend is that more people are choosing to work remotely.
+**日本語:** 顕著な傾向の一つは、リモートワークを選ぶ人が増えていることである。
+
+---
+
+### Quick Review
+
+| Word | Part of Speech | 日本語 |
+| ----------- | ---------------- | --------- |
+| implication | noun | 影響、含意 |
+| preserve | verb | 保存する、保護する |
+| alternative | noun / adjective | 代替案、代替の |
+| efficient | adjective | 効率的な |
+| trend | noun | 傾向、動向 |
+
+### IELTS Writing Tip
+
+**trend**, **implication**, **alternative** は Task 1・Task 2 のどちらでも使いやすい重要語です。
+
+* *A clear **trend** can be observed in the graph.*
+* *This policy may have significant **implications** for young people.*
+* *An **alternative** solution would be to invest in public transportation.*
+
+### Mini Challenge
+
+英訳してみましょう。
+
+**「効率的な公共交通機関は、自動車に代わる選択肢となり、環境に良い影響を与える可能性がある。」**
+
+I noticed you haven’t viewed this scheduled task in a while. Would you like me to keep it running?`;
+
+        // 音声エンジン関連
+        const synth = window.speechSynthesis;
+        
+        // オートプレイ用の状態管理
+        let autoplayQueue = [];
+        let autoplayIndex = 0;
+        let isAutoplayPlaying = false;
+        let isAutoplayPaused = false;
+        let currentUtterance = null;
+
+        // 初期化処理
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+            
+            // 日付設定
+            const d = new Date();
+            document.getElementById("today-date").textContent = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
+            
+            // テキスト入力初期値
+            document.getElementById("raw-text-input").value = defaultRawText;
+
+            // アプリデータの読み込み・描画
+            renderApp(appData);
+
+            // イベントリスナー
+            setupEventListeners();
+        });
+
+        // 画面全体を描画する関数
+        function renderApp(data) {
+            stopAutoplay(); // データ変更時は音声を停止
+            renderCards(data.words);
+            renderTable(data.words, data.quickReview);
+            renderChallenge(data.challenge);
+            lucide.createIcons();
+        }
+
+        // 単語カードの描画
+        function renderCards(words) {
+            const container = document.getElementById("cards-container");
+            container.innerHTML = "";
+
+            words.forEach((w, index) => {
+                const card = document.createElement("div");
+                card.id = `word-card-${index}`;
+                card.className = "bg-white rounded-2xl shadow-sm border border-slate-100 hover:border-indigo-100 p-6 transition duration-200 relative group";
+                
+                card.innerHTML = `
+                    <!-- バッジ & 音声 -->
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 font-bold text-sm">
+                                ${index + 1}
+                            </span>
+                            <div>
+                                <h3 class="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                                    <span id="card-title-text-${index}" class="px-1.5 rounded transition">${w.word}</span>
+                                    <span class="text-xs font-semibold px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md capitalize">${w.pos}</span>
+                                </h3>
+                            </div>
+                        </div>
+                        
+                        <!-- 個別音声ボタン -->
+                        <div class="flex gap-1.5">
+                            <button onclick="speakText('${w.word}', 'en-US', 'card-title-text-${index}')" class="p-2 hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 rounded-xl transition flex items-center gap-1 text-xs font-medium" title="単語(英)を再生">
+                                <i data-lucide="volume-2" class="w-5 h-5"></i>
+                                <span class="hidden sm:inline">Word</span>
+                            </button>
+                            <button onclick="speakText('${w.meaning.replace(/'/g, "\\'")}', 'en-US', 'card-meaning-text-${index}')" class="p-2 hover:bg-amber-50 text-slate-400 hover:text-amber-600 rounded-xl transition flex items-center gap-1 text-xs font-medium" title="意味(英)を再生">
+                                <i data-lucide="book-open" class="w-5 h-5"></i>
+                                <span class="hidden sm:inline">Meaning</span>
+                            </button>
+                            <button onclick="speakText('${w.japanese.replace(/'/g, "\\'")}', 'ja-JP', 'card-japanese-text-${index}')" class="p-2 hover:bg-emerald-50 text-slate-400 hover:text-emerald-600 rounded-xl transition flex items-center gap-1 text-xs font-medium" title="日本語訳を再生">
+                                <i data-lucide="volume" class="w-5 h-5"></i>
+                                <span class="hidden sm:inline">日本語</span>
+                            </button>
+                            <button onclick="speakText('${w.example.replace(/'/g, "\\'")}', 'en-US', 'card-example-text-${index}')" class="p-2 hover:bg-purple-50 text-slate-400 hover:text-purple-600 rounded-xl transition flex items-center gap-1 text-xs font-medium" title="例文(英)を再生">
+                                <i data-lucide="volume-1" class="w-5 h-5"></i>
+                                <span class="hidden sm:inline">Example</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 意味 -->
+                    <div class="mb-4 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <span class="text-xs text-slate-400 font-bold block uppercase tracking-wider mb-1">MEANING (英語での定義)</span>
+                        <p class="text-slate-700 font-medium text-sm md:text-base">
+                            <span id="card-meaning-text-${index}" class="px-1.5 rounded transition">${w.meaning}</span>
+                        </p>
+                    </div>
+
+                    <!-- 例文 -->
+                    <div class="space-y-2 border-l-4 border-indigo-500 pl-4 py-1">
+                        <div>
+                            <span class="text-xs text-indigo-500 font-bold block uppercase tracking-wider">EXAMPLE SENTENCE</span>
+                            <p class="text-slate-800 font-semibold text-base md:text-lg mt-0.5 leading-relaxed">
+                                <span id="card-example-text-${index}" class="px-1.5 rounded transition">${w.example}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500 text-sm md:text-base">
+                                <span id="card-japanese-text-${index}" class="px-1.5 rounded transition">${w.japanese}</span>
+                            </p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // クイックレビュー（テーブル）の描画
+        function renderTable(words, reviews) {
+            const tbody = document.getElementById("review-table-body");
+            tbody.innerHTML = "";
+
+            words.forEach((w) => {
+                const reviewItem = reviews.find(r => r.word.toLowerCase() === w.word.toLowerCase());
+                const jpPos = reviewItem ? reviewItem.pos : w.pos;
+                const jpMeaning = reviewItem ? reviewItem.meaning : w.japanese;
+
+                const tr = document.createElement("tr");
+                tr.id = `review-row-${w.word.toLowerCase()}`;
+                tr.className = "hover:bg-slate-50 transition border-b border-slate-50";
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-bold text-indigo-600">${w.word}</td>
+                    <td class="py-3 px-4 text-xs font-medium text-slate-500">${jpPos}</td>
+                    <td class="py-3 px-4 font-medium text-slate-700">${jpMeaning}</td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="speakText('${w.word}', 'en-US')" class="p-1.5 hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 rounded-lg transition" title="再生">
+                            <i data-lucide="volume-2" class="w-4 h-4 mx-auto"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ミニチャレンジの描画
+        function renderChallenge(challenge) {
+            document.getElementById("challenge-japanese-prompt").textContent = `「${challenge.prompt}」`;
+            document.getElementById("hint-text").innerHTML = `ヒント: <span class="bg-indigo-800 px-2 py-0.5 rounded text-indigo-300 font-semibold">${challenge.hintWord}</span> を使ってみましょう。`;
+            document.getElementById("model-answer-text").textContent = challenge.model;
+            document.getElementById("model-translation-text").textContent = `(${challenge.prompt})`;
+
+            document.getElementById("user-answer").value = "";
+            document.getElementById("result-box").classList.add("hidden");
+        }
+
+        // イベント設定
+        function setupEventListeners() {
+            // アコーディオンの開閉
+            const toggleBtn = document.getElementById("toggle-input-btn");
+            const inputArea = document.getElementById("input-area");
+            const inputArrow = document.getElementById("input-arrow");
+
+            toggleBtn.addEventListener("click", () => {
+                inputArea.classList.toggle("hidden");
+                inputArrow.classList.toggle("rotate-180");
+            });
+
+            inputArea.classList.add("hidden");
+
+            // 前のテキストを消すクリアボタンの処理
+            document.getElementById("clear-text-btn").addEventListener("click", () => {
+                const rawInput = document.getElementById("raw-text-input");
+                rawInput.value = "";
+                rawInput.focus();
+                showToast("入力をクリアしました。新しいテキストを貼り付けてください。", "trash-2");
+            });
+
+            // Day 9 のテストデータ読み込み
+            document.getElementById("load-day9-btn").addEventListener("click", () => {
+                document.getElementById("raw-text-input").value = day9Text;
+                showToast("Day 9 のテスト用テキストを入力欄にセットしました！", "copy");
+                // 入力エリアを開く
+                inputArea.classList.remove("hidden");
+                inputArrow.classList.add("rotate-180");
+            });
+
+            // デフォルトデータ読み込み
+            document.getElementById("load-default-btn").addEventListener("click", () => {
+                document.getElementById("raw-text-input").value = defaultRawText;
+                showToast("デフォルトデータを入力欄にセットしました", "info");
+            });
+
+            // データ更新
+            document.getElementById("process-text-btn").addEventListener("click", () => {
+                const text = document.getElementById("raw-text-input").value.trim();
+                
+                if (!text) {
+                    showToast("テキストが入力されていません。", "alert-circle");
+                    return;
+                }
+
+                const parsed = parseRawText(text);
+                
+                if (parsed) {
+                    appData = parsed;
+                    renderApp(appData);
+                    showToast("単語データを新しく更新しました！", "check-circle");
+                    inputArea.classList.add("hidden");
+                    inputArrow.classList.remove("rotate-180");
+                } else {
+                    showToast("テキストの解析に失敗しました。フォーマットを確認してください。", "alert-triangle");
+                }
+            });
+
+            // 解答チェック
+            document.getElementById("submit-answer-btn").addEventListener("click", () => {
+                checkAnswer();
+            });
+
+            // 最初の1文字ヒント
+            document.getElementById("show-hint-btn").addEventListener("click", () => {
+                const model = appData.challenge.model.trim();
+                showToast(`最初のヒント: "${model.substring(0, 3)}..."`, "help-circle");
+            });
+
+            // 模範解答の読み上げ
+            document.getElementById("play-model-ans-btn").addEventListener("click", () => {
+                speakText(appData.challenge.model, "en-US");
+            });
+
+            // === オートプレイ（連続再生）の制御イベント ===
+            document.getElementById("autoplay-play-btn").addEventListener("click", () => {
+                if (isAutoplayPaused) {
+                    resumeAutoplay();
+                } else {
+                    startAutoplay();
+                }
+            });
+
+            document.getElementById("autoplay-pause-btn").addEventListener("click", () => {
+                pauseAutoplay();
+            });
+
+            document.getElementById("autoplay-stop-btn").addEventListener("click", () => {
+                stopAutoplay();
+            });
+        }
+
+        // --- 音声読み上げロジック (Web Speech API) ---
+
+        // 汎用・単発読み上げ関数
+        function speakText(text, lang, highlightElementId = null) {
+            if (!synth) {
+                showToast("お使いのブラウザは音声読み上げに対応していません。", "alert-triangle");
+                return;
+            }
+
+            if (isAutoplayPlaying) {
+                stopAutoplay();
+            }
+
+            synth.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            utterance.pitch = 1.0;
+            utterance.rate = lang.startsWith('en') ? 0.95 : 1.0;
+
+            const voices = synth.getVoices();
+            if (lang.startsWith('en')) {
+                const preferredVoice = voices.find(v => v.lang.includes('US') || v.lang.includes('GB') || v.lang.includes('en'));
+                if (preferredVoice) utterance.voice = preferredVoice;
+            } else if (lang.startsWith('ja')) {
+                const preferredVoice = voices.find(v => v.lang.includes('JP') || v.lang.includes('ja'));
+                if (preferredVoice) utterance.voice = preferredVoice;
+            }
+
+            const element = highlightElementId ? document.getElementById(highlightElementId) : null;
+
+            utterance.onstart = () => {
+                if (element) element.classList.add("bg-yellow-200", "text-slate-950", "highlight-active");
+            };
+
+            utterance.onend = () => {
+                if (element) {
+                    element.classList.remove("bg-yellow-200", "text-slate-950", "highlight-active");
+                }
+            };
+
+            utterance.onerror = () => {
+                if (element) {
+                    element.classList.remove("bg-yellow-200", "text-slate-950", "highlight-active");
+                }
+            };
+
+            synth.speak(utterance);
+        }
+
+        // --- オートプレイ（連続自動再生機能）の制御 ---
+
+        // オートプレイを開始
+        function startAutoplay() {
+            if (!synth) return;
+            synth.cancel();
+
+            autoplayQueue = [];
+
+            // 1. 【予習フェーズ】5つの単語・日本語訳をテンポよくすべて読み上げ
+            appData.words.forEach((w, cardIndex) => {
+                const reviewItem = appData.quickReview.find(r => r.word.toLowerCase() === w.word.toLowerCase());
+                const jpMeaning = reviewItem ? reviewItem.meaning : w.japanese;
+
+                autoplayQueue.push({
+                    text: w.word,
+                    lang: "en-US",
+                    elementId: `card-title-text-${cardIndex}`,
+                    cardId: `word-card-${cardIndex}`,
+                    label: `【一気予習】単語: ${w.word}`,
+                    rate: 1.0
+                });
+                autoplayQueue.push({
+                    text: jpMeaning,
+                    lang: "ja-JP",
+                    elementId: `card-title-text-${cardIndex}`,
+                    cardId: `word-card-${cardIndex}`,
+                    label: `【一気予習】訳: ${jpMeaning}`,
+                    rate: 1.0
+                });
+            });
+
+            // 2. 【詳細フェーズ】各単語の詳細 (単語 ➔ 定義 ➔ 日本語 ➔ 例文) をじっくり進める
+            appData.words.forEach((w, cardIndex) => {
+                autoplayQueue.push({
+                    text: w.word,
+                    lang: "en-US",
+                    elementId: `card-title-text-${cardIndex}`,
+                    cardId: `word-card-${cardIndex}`,
+                    label: `【詳細学習】単語 ${cardIndex + 1}/5: ${w.word}`,
+                    rate: 0.9
+                });
+                autoplayQueue.push({
+                    text: w.meaning,
+                    lang: "en-US",
+                    elementId: `card-meaning-text-${cardIndex}`,
+                    cardId: `word-card-${cardIndex}`,
+                    label: `【詳細学習】定義 ${cardIndex + 1}/5`,
+                    rate: 0.95
+                });
+                autoplayQueue.push({
+                    text: w.japanese,
+                    lang: "ja-JP",
+                    elementId: `card-japanese-text-${cardIndex}`,
+                    cardId: `word-card-${cardIndex}`,
+                    label: `【詳細学習】日本語訳 ${cardIndex + 1}/5`,
+                    rate: 1.0
+                });
+                autoplayQueue.push({
+                    text: w.example,
+                    lang: "en-US",
+                    elementId: `card-example-text-${cardIndex}`,
+                    cardId: `word-card-${cardIndex}`,
+                    label: `【詳細学習】例文 ${cardIndex + 1}/5`,
+                    rate: 0.9
+                });
+            });
+
+            autoplayIndex = 0;
+            isAutoplayPlaying = true;
+            isAutoplayPaused = false;
+
+            // UI変更
+            document.getElementById("autoplay-status-bar").classList.remove("hidden");
+            document.getElementById("autoplay-play-btn").classList.add("hidden");
+            document.getElementById("autoplay-pause-btn").classList.remove("hidden");
+
+            showToast("5単語の一気予習からオートプレイをスタートします！", "play");
+            playNextInQueue();
+        }
+
+        // 次のキューを再生
+        function playNextInQueue() {
+            if (!isAutoplayPlaying || isAutoplayPaused) return;
+
+            if (autoplayIndex >= autoplayQueue.length) {
+                showToast("すべての連続読み上げが完了しました！", "smile");
+                stopAutoplay();
+                return;
+            }
+
+            const current = autoplayQueue[autoplayIndex];
+            
+            // 進捗表示を更新
+            updateAutoplayUI(current);
+
+            // 対象カードまでスムーズにスクロールさせる
+            const cardElement = document.getElementById(current.cardId);
+            if (cardElement) {
+                cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            // 読み上げオブジェクト作成
+            currentUtterance = new SpeechSynthesisUtterance(current.text);
+            currentUtterance.lang = current.lang;
+            currentUtterance.rate = current.rate || (current.lang.startsWith('en') ? 0.95 : 1.0);
+
+            const voices = synth.getVoices();
+            if (current.lang.startsWith('en')) {
+                const preferredVoice = voices.find(v => v.lang.includes('US') || v.lang.includes('GB'));
+                if (preferredVoice) currentUtterance.voice = preferredVoice;
+            } else {
+                const preferredVoice = voices.find(v => v.lang.includes('JP') || v.lang.includes('ja'));
+                if (preferredVoice) currentUtterance.voice = preferredVoice;
+            }
+
+            // 再生中ハイライトの対象DOM
+            const textElement = document.getElementById(current.elementId);
+
+            currentUtterance.onstart = () => {
+                if (textElement) {
+                    textElement.classList.add("bg-yellow-200", "text-slate-950", "highlight-active");
+                }
+            };
+
+            currentUtterance.onend = () => {
+                if (textElement) {
+                    textElement.classList.remove("bg-yellow-200", "text-slate-950", "highlight-active");
+                }
+                
+                const interval = current.label.includes("一気予習") ? 500 : 900;
+                
+                setTimeout(() => {
+                    if (isAutoplayPlaying && !isAutoplayPaused) {
+                        autoplayIndex++;
+                        playNextInQueue();
+                    }
+                }, interval);
+            };
+
+            currentUtterance.onerror = (e) => {
+                console.error("Speech error", e);
+                if (textElement) {
+                    textElement.classList.remove("bg-yellow-200", "text-slate-950", "highlight-active");
+                }
+                autoplayIndex++;
+                playNextInQueue();
+            };
+
+            synth.speak(currentUtterance);
+        }
+
+        // オートプレイの一時停止
+        function pauseAutoplay() {
+            if (!isAutoplayPlaying) return;
+            
+            isAutoplayPaused = true;
+            synth.pause();
+
+            // UI変更
+            document.getElementById("autoplay-play-btn").classList.remove("hidden");
+            document.getElementById("autoplay-play-btn").innerHTML = `<i data-lucide="play" class="w-4 h-4 fill-emerald-700"></i> 再開する`;
+            document.getElementById("autoplay-pause-btn").classList.add("hidden");
+            lucide.createIcons();
+
+            showToast("連続再生を一時停止しました", "pause");
+        }
+
+        // オートプレイの再開
+        function resumeAutoplay() {
+            if (!isAutoplayPlaying || !isAutoplayPaused) return;
+
+            isAutoplayPaused = false;
+            
+            // UI変更
+            document.getElementById("autoplay-play-btn").classList.add("hidden");
+            document.getElementById("autoplay-pause-btn").classList.remove("hidden");
+
+            showToast("連続再生を再開します", "play");
+            
+            if (synth.paused) {
+                synth.resume();
+            } else {
+                playNextInQueue();
+            }
+        }
+
+        // オートプレイの完全停止・リセット
+        function stopAutoplay() {
+            isAutoplayPlaying = false;
+            isAutoplayPaused = false;
+            autoplayIndex = 0;
+            
+            if (synth) {
+                synth.cancel();
+            }
+
+            // ハイライトを全て強制クリア
+            document.querySelectorAll(".highlight-active").forEach(el => {
+                el.classList.remove("bg-yellow-200", "text-slate-950", "highlight-active");
+            });
+
+            // UIを元に戻す
+            document.getElementById("autoplay-status-bar").classList.add("hidden");
+            const playBtn = document.getElementById("autoplay-play-btn");
+            playBtn.classList.remove("hidden");
+            playBtn.innerHTML = `<i data-lucide="play" class="w-4 h-4 fill-emerald-700"></i> 連続再生スタート`;
+            document.getElementById("autoplay-pause-btn").classList.add("hidden");
+            lucide.createIcons();
+        }
+
+        // オートプレイ時の進捗バーとラベル表示更新
+        function updateAutoplayUI(current) {
+            const progress = ((autoplayIndex) / autoplayQueue.length) * 100;
+            
+            document.getElementById("autoplay-current-step").textContent = `再生中: ${current.label}`;
+            document.getElementById("autoplay-percentage").textContent = `${Math.round(progress)}%`;
+            document.getElementById("autoplay-progress-indicator").style.width = `${progress}%`;
+        }
+
+        // --- マークダウン記法＆重複対応の極限パーサー ---
+        function parseRawText(text) {
+            try {
+                // マークダウンから記号を剥ぎ取るヘルパー
+                const cleanMD = (str) => {
+                    return str.replace(/\*\*|_/g, "")
+                              .replace(/\*/g, "")
+                              .replace(/`+/g, "")
+                              .trim();
+                };
+
+                const lines = text.split('\n').map(line => line.trim());
+                const words = [];
+                let quickReview = [];
+                let challenge = { prompt: "", model: "", hintWord: "" };
+
+                // 1. 各単語ブロックの抽出
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    
+                    // 「1. Implication (noun)」や「#### 1. **Implication** *(noun)*」などに幅広くヒットする正規表現
+                    const headerMatch = line.match(/^(?:#+\s*)?([1-5])\.\s*\*?\*?([A-Za-z\-]+)\*?\*?\s*(?:\*?\s*\(([^)]+)\)\*?)?/i);
+                    
+                    if (headerMatch) {
+                        const indexNum = parseInt(headerMatch[1], 10);
+                        let rawWord = headerMatch[2];
+                        let rawPos = headerMatch[3] || "";
+
+                        // 重複・取り消し対象の単語（Day 9の「Allocate」のような重複回避用ダミー行）を検出するガード
+                        // もし行内、もしくは直後の文脈に "avoid repeats" や "already used" が入っていたらノイズとしてスキップ
+                        const fullLineContext = line + (lines[i + 1] || "") + (lines[i + 2] || "");
+                        if (fullLineContext.toLowerCase().includes("avoid repeats") || 
+                            fullLineContext.toLowerCase().includes("already used") ||
+                            fullLineContext.toLowerCase().includes("so instead")) {
+                            continue; // このインデックスはダミーなので読み飛ばす
+                        }
+
+                        // 各パーツをクリーンアップ
+                        const word = cleanMD(rawWord);
+                        const pos = cleanMD(rawPos).replace(/[()]/g, "");
+
+                        let meaning = "";
+                        let example = "";
+                        let japanese = "";
+
+                        // 次の見出し、または次の単語番号が出てくる直前までを走査
+                        for (let j = 1; j <= 8; j++) {
+                            const nextLine = lines[i + j];
+                            if (nextLine === undefined) break;
+
+                            // 次の単語ブロック開始にぶつかったらスキャン終了
+                            if (nextLine.match(/^(?:#+\s*)?[1-5]\.\s*/)) {
+                                break;
+                            }
+
+                            const cleanedNextLine = cleanMD(nextLine);
+                            
+                            if (cleanedNextLine.startsWith("Meaning:")) {
+                                meaning = cleanedNextLine.replace(/^Meaning:\s*/i, "").trim();
+                            } else if (cleanedNextLine.startsWith("Example:")) {
+                                example = cleanedNextLine.replace(/^Example:\s*/i, "").trim();
+                            } else if (cleanedNextLine.startsWith("日本語:")) {
+                                japanese = cleanedNextLine.replace(/^日本語:\s*/i, "").trim();
+                            }
+                        }
+
+                        if (word && meaning && example && japanese) {
+                            // 重複が発生したら後方の正しいデータで上書き
+                            const existingIdx = words.findIndex(w => w.id === indexNum);
+                            const wordObj = { id: indexNum, word, pos, meaning, example, japanese };
+                            if (existingIdx !== -1) {
+                                words[existingIdx] = wordObj;
+                            } else {
+                                words.push(wordObj);
+                            }
+                        }
+                    }
+                }
+
+                // IDの昇順にソートしてカードのインデックスを確定
+                words.sort((a, b) => a.id - b.id);
+
+                // 2. クイックレビュー（通常テキスト & マークダウンテーブル対応）
+                let reviewSectionStarted = false;
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].toLowerCase();
+                    if (line.includes("quick review")) {
+                        reviewSectionStarted = true;
+                        continue;
+                    }
+                    if (reviewSectionStarted) {
+                        // 次のセクションに突入した場合は停止
+                        if (line.includes("mini challenge") || line.includes("英訳してみましょう") || line.includes("writing tip")) {
+                            break;
+                        }
+
+                        const cleanedLine = cleanMD(lines[i]);
+                        
+                        // マークダウンのテーブル記法「| word | part of speech | ... |」にマッチ
+                        if (cleanedLine.startsWith("|") && !cleanedLine.includes("---")) {
+                            const cells = cleanedLine.split("|").map(cell => cell.trim()).filter(cell => cell !== "");
+                            
+                            // ヘッダー行をスキップ
+                            if (cells[0].toLowerCase().includes("word") || cells[1]?.toLowerCase().includes("speech")) {
+                                continue;
+                            }
+                            
+                            if (cells.length >= 3) {
+                                const tblWord = cleanMD(cells[0]);
+                                let tblPos = cleanMD(cells[1]);
+                                const tblMeaning = cleanMD(cells[2]);
+
+                                // 英語表記の品詞を日本語にマッピング
+                                if (tblPos.toLowerCase().includes("noun")) tblPos = "名詞";
+                                else if (tblPos.toLowerCase().includes("verb")) tblPos = "動詞";
+                                else if (tblPos.toLowerCase().includes("adjective")) tblPos = "形容詞";
+                                else if (tblPos.toLowerCase().includes("adverb")) tblPos = "副詞";
+
+                                const targetWord = words.find(w => w.word.toLowerCase() === tblWord.toLowerCase());
+                                if (targetWord) {
+                                    quickReview.push({ word: targetWord.word, pos: tblPos, meaning: tblMeaning });
+                                }
+                            }
+                        } 
+                        // テーブルではなく、通常のテキスト形式で書かれていた場合の旧来の検出
+                        else if (cleanedLine && !cleanedLine.startsWith("|")) {
+                            for (let w of words) {
+                                const lowerWord = w.word.toLowerCase();
+                                if (cleanedLine.toLowerCase().startsWith(lowerWord)) {
+                                    const rest = cleanedLine.substring(lowerWord.length).trim();
+                                    const posMatch = rest.match(/^(動詞|形容詞|名詞|副詞|noun|verb|adjective|adverb)/i);
+                                    if (posMatch) {
+                                        const posText = rest.match(/^[A-Za-z\s\/ぁ-んァ-ヶ一-龠]+/)[0].trim();
+                                        const meaning = rest.substring(posText.length).trim();
+                                        let displayPos = posText;
+                                        if (displayPos.toLowerCase().includes("noun")) displayPos = "名詞";
+                                        else if (displayPos.toLowerCase().includes("verb")) displayPos = "動詞";
+                                        else if (displayPos.toLowerCase().includes("adjective")) displayPos = "形容詞";
+                                        else if (displayPos.toLowerCase().includes("adverb")) displayPos = "副詞";
+
+                                        quickReview.push({ word: w.word, pos: displayPos, meaning });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // クイックレビューが失敗した時のセーフガード
+                if (quickReview.length === 0) {
+                    quickReview = words.map(w => {
+                        let jpPos = w.pos;
+                        if (jpPos.toLowerCase().includes("noun")) jpPos = "名詞";
+                        else if (jpPos.toLowerCase().includes("verb")) jpPos = "動詞";
+                        else if (jpPos.toLowerCase().includes("adjective")) jpPos = "形容詞";
+                        else if (jpPos.toLowerCase().includes("adverb")) jpPos = "副詞";
+
+                        let jpMeaning = w.japanese.split("、")[0].split("は")[0].trim();
+                        if (jpMeaning.length > 15) jpMeaning = jpMeaning.substring(0, 12) + "...";
+
+                        return { word: w.word, pos: jpPos, meaning: jpMeaning };
+                    });
+                }
+
+                // 3. ミニチャレンジの日本語問題抽出
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    if (line.includes("Mini Challenge") || line.includes("英訳してみましょう") || line.includes("次の英文")) {
+                        for (let j = 1; j <= 5; j++) {
+                            const nextLine = lines[i + j] || "";
+                            const cleanedNext = cleanMD(nextLine);
+                            if (cleanedNext.startsWith("「") && cleanedNext.endsWith("」")) {
+                                challenge.prompt = cleanedNext.replace(/[「」]/g, "").trim();
+                                break;
+                            }
+                        }
+                        if (challenge.prompt) break;
+                    }
+                }
+
+                // お題に応じた模範解答とヒントの設定
+                if (challenge.prompt) {
+                    // Day 9 お題
+                    if (challenge.prompt.includes("公共交通機関") || challenge.prompt.includes("自動車に代わる")) {
+                        challenge.model = "Efficient public transportation can be an alternative to cars and may have a positive implication for the environment.";
+                        challenge.hintWord = "efficient";
+                    } 
+                    // Day 1 お題
+                    else if (challenge.prompt.includes("教育への投資")) {
+                        challenge.model = "Investing in education helps to sustain long-term economic growth.";
+                        challenge.hintWord = "sustain";
+                    } 
+                    // その他（自動フォールバック）
+                    else {
+                        if (words.length > 0) {
+                            challenge.model = words[0].example;
+                            challenge.hintWord = words[0].word.toLowerCase();
+                        } else {
+                            challenge.model = "An alternative solution is required.";
+                            challenge.hintWord = "alternative";
+                        }
+                    }
+                } else {
+                    challenge.prompt = "効率的な公共交通機関は、自動車に代わる選択肢となり、環境に良い影響を与える可能性があります。";
+                    challenge.model = "Efficient public transportation can be an alternative to cars and may have a positive implication for the environment.";
+                    challenge.hintWord = "efficient";
+                }
+
+                if (words.length > 0) {
+                    return { date: "Daily Vocabulary Booster", words, quickReview, challenge };
+                }
+                return null;
+            } catch (e) {
+                console.error("Parse Error: ", e);
+                return null;
+            }
+        }
+
+        // 類似度算出
+        function calculateSimilarity(str1, str2) {
+            const normalize = (str) => {
+                return str.toLowerCase()
+                          .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()「」]/g, "")
+                          .replace(/\s+/g, " ")
+                          .trim();
+            };
+
+            const s1 = normalize(str1).split(" ");
+            const s2 = normalize(str2).split(" ");
+            
+            let matches = 0;
+            s1.forEach(word => {
+                if (s2.includes(word)) {
+                    matches++;
+                }
+            });
+
+            const maxLen = Math.max(s1.length, s2.length);
+            return Math.round((matches / maxLen) * 100);
+        }
+
+        // 解答チェック
+        function checkAnswer() {
+            const userAnswer = document.getElementById("user-answer").value.trim();
+            if (!userAnswer) {
+                showToast("解答を入力してください！", "alert-circle");
+                return;
+            }
+
+            const modelAnswer = appData.challenge.model;
+            const score = calculateSimilarity(userAnswer, modelAnswer);
+            
+            const resultBox = document.getElementById("result-box");
+            const statusHeader = document.getElementById("result-status-header");
+            const scoreDisplay = document.getElementById("similarity-score");
+            
+            resultBox.classList.remove("hidden");
+            scoreDisplay.textContent = `${score}%`;
+
+            const fbPoints = document.getElementById("feedback-points");
+            fbPoints.innerHTML = "";
+
+            if (score >= 90) {
+                statusHeader.innerHTML = `
+                    <div class="p-2 bg-emerald-500/20 text-emerald-400 rounded-lg">
+                        <i data-lucide="sparkles" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-emerald-400 text-lg">Perfect! 素晴らしい英語表現です！</h4>
+                        <p class="text-xs text-slate-400">主要な重要単語を正しく組み合わせることができています。</p>
+                    </div>
+                `;
+                scoreDisplay.className = "font-bold text-lg text-emerald-400";
+            } else if (score >= 50) {
+                statusHeader.innerHTML = `
+                    <div class="p-2 bg-amber-500/20 text-amber-400 rounded-lg">
+                        <i data-lucide="thumbs-up" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-amber-400 text-lg">Good job! 意味は十分に伝わります！</h4>
+                        <p class="text-xs text-slate-400">重要キーワードがバッチリ入っています。さらに磨くコツ：</p>
+                    </div>
+                `;
+                scoreDisplay.className = "font-bold text-lg text-amber-400";
+            } else {
+                statusHeader.innerHTML = `
+                    <div class="p-2 bg-rose-500/20 text-rose-400 rounded-lg">
+                        <i data-lucide="help-circle" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-rose-300 text-lg">Keep Fighting! チャレンジしましょう！</h4>
+                        <p class="text-xs text-slate-400">模範解答をお手本にして、各重要単語の文法構造を復習してみましょう。</p>
+                    </div>
+                `;
+                scoreDisplay.className = "font-bold text-lg text-rose-400";
+            }
+
+            if (modelAnswer.includes("transportation")) {
+                fbPoints.innerHTML = `
+                    <li>「効率的な公共交通機関」は <strong>"Efficient public transportation"</strong> が適切です。</li>
+                    <li>「～に代わる選択肢」は <strong>"an alternative to [名詞]"</strong> (toの後に動名詞または名詞) を用います。</li>
+                    <li>「～に影響を与える」は <strong>"have an implication for..."</strong> や <strong>"have an effect/influence on..."</strong> と書くと、Task 2 で高い評価（Collocation評価）を得られます。</li>
+                `;
+            } else if (modelAnswer.includes("sustain")) {
+                fbPoints.innerHTML = `
+                    <li>「～への投資」は <strong>"Investing in ~"</strong> または <strong>"Investment in..."</strong> です。</li>
+                    <li>「～を維持するのに役立つ」は <strong>"helps to sustain..."</strong> または <strong>"helps sustain..."</strong> と表します。</li>
+                    <li>「長期的な経済成長」は <strong>"long-term economic growth"</strong> が最適なアカデミックライティングの表現です。</li>
+                `;
+            } else {
+                fbPoints.innerHTML = `
+                    <li>解答の中でお題のターゲットワード <strong>"${appData.challenge.hintWord}"</strong> が正しく配置されているかを確認してみましょう。</li>
+                    <li>前置詞の使い分けや、名詞の単数・複数、時制に気を配ることでグラマーの正確性（GRA）スコアを上げることができます。</li>
+                `;
+            }
+
+            lucide.createIcons();
+            resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // トースト通知
+        function showToast(message, iconName = "info") {
+            const toast = document.getElementById("toast");
+            const toastMessage = document.getElementById("toast-message");
+            const toastIcon = document.getElementById("toast-icon");
+            
+            toastMessage.textContent = message;
+            toastIcon.setAttribute("data-lucide", iconName);
+            lucide.createIcons();
+
+            toast.classList.remove("translate-y-20", "opacity-0");
+            toast.classList.add("translate-y-0", "opacity-100");
+
+            setTimeout(() => {
+                toast.classList.remove("translate-y-0", "opacity-100");
+                toast.classList.add("translate-y-20", "opacity-0");
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
