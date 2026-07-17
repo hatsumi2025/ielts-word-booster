@@ -37,7 +37,7 @@
             </div>
             <div class="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg text-sm flex items-center gap-2">
                 <i data-lucide="calendar" class="w-4 h-4 text-purple-200"></i>
-                <span id="today-date" class="font-medium">2026/07/01</span>
+                <span id="today-date" class="font-medium">2026/07/08</span>
             </div>
         </div>
     </header>
@@ -58,9 +58,9 @@
             </div>
             
             <div id="input-area" class="transition-all duration-300 space-y-4">
-                <p class="text-xs text-slate-500 leading-relaxed">
+                <p class="text-xs text-slate-500 leading-relaxed font-medium">
                     毎朝送られてくる「IELTS 6.5 Vocabulary」のテキストをそのまま下に貼り付けて「データを更新」ボタンを押してください。<br>
-                    <span class="text-indigo-600 font-semibold">★ マークダウン記号（**や##など）や不要な繰り返し注釈、末尾のシステム警告分は自動で除外されて綺麗に読み込まれます！</span>
+                    <span class="text-indigo-600">★ IELTS Writing Tipも自動検出され、暗記や音声練習用の特別レッスンカードが生成されます！</span>
                 </p>
                 <textarea id="raw-text-input" class="w-full h-48 p-4 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono" placeholder="ここに毎朝のアウトプットテキストを貼り付けてください..."></textarea>
                 <div class="flex justify-end gap-2 flex-wrap">
@@ -69,11 +69,17 @@
                         <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                         入力をクリア
                     </button>
-                    <!-- Day 9 テストデータセット用 -->
-                    <button id="load-day9-btn" class="px-4 py-2 text-xs border border-amber-200 hover:bg-amber-50 rounded-lg text-amber-700 transition font-medium flex items-center gap-1 shadow-sm" title="マークダウン等が含まれたDay 9データを入力欄にセットします">
+                    <!-- Day 16 テストデータセット用 -->
+                    <button id="load-day16-btn" class="px-4 py-2 text-xs border border-indigo-200 hover:bg-indigo-50 rounded-lg text-indigo-700 transition font-medium flex items-center gap-1 shadow-sm" title="Day 16データを入力欄にセットします">
                         <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                        新テキスト（Day 9）をセット
+                        新テキスト（Day 16）をセット
                     </button>
+                    <!-- Day 9 テストデータセット用 -->
+                    <button id="load-day9-btn" class="px-4 py-2 text-xs border border-amber-200 hover:bg-amber-50 rounded-lg text-amber-700 transition font-medium flex items-center gap-1 shadow-sm" title="Day 9データを入力欄にセットします">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        テキスト（Day 9）をセット
+                    </button>
+                    <!-- デフォルトデータセット用 -->
                     <button id="load-default-btn" class="px-4 py-2 text-xs border border-slate-200 hover:bg-slate-50 rounded-lg text-slate-600 transition font-medium">
                         デフォルト（Day 1）をセット
                     </button>
@@ -85,22 +91,22 @@
             </div>
         </section>
 
-        <!-- オートプレイヤー（連続音声再生パネル） -->
+        <!-- オートプレイ連続音声再生パネル -->
         <section class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl p-6 shadow-md">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="space-y-1">
                     <div class="flex items-center gap-2">
                         <span class="bg-white/20 text-white text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
                             <span class="w-2 h-2 rounded-full bg-red-400 animate-ping"></span>
-                            FULL FLOW
+                            AUDIO FLOW UPDATED
                         </span>
                         <h2 class="text-xl font-bold flex items-center gap-2">
                             <i data-lucide="play-circle"></i>
-                            オートプレイ（一気見予習 ➔ 詳細学習）
+                            オートプレイ（一気予習 ➔ 単語・訳・例文）
                         </h2>
                     </div>
                     <p class="text-emerald-50 text-sm">
-                        最初に<strong>5つの単語・日本語訳をテンポよく予習</strong>したあと、<strong>「単語 ➔ 定義 ➔ 日本語訳 ➔ 例文」</strong>の順に1単語ずつじっくり進めます。
+                        最初に<strong>5つの単語・意味の予習</strong>を行い、その後<strong>「単語 ➔ 日本語訳 ➔ 例文」</strong>の順に連続再生します（英語定義 of Meaning の読み上げはスキップします）。
                     </p>
                 </div>
                 <!-- プレイヤーボタン類 -->
@@ -170,6 +176,30 @@
             </div>
         </section>
 
+        <!-- IELTS Writing Tips セクション -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                    <i data-lucide="pen-tool" class="text-indigo-500"></i>
+                    ✍️ IELTS Writing Tips & 例文シャドーイング
+                </h2>
+                <span id="hide-all-tips-badge" class="text-xs text-indigo-600 bg-indigo-50 px-2 py-1 rounded-lg font-medium">目隠しトグル付き</span>
+            </div>
+            
+            <!-- Tipの説明部分 -->
+            <div class="bg-indigo-50/50 rounded-xl p-4 mb-4 border border-indigo-100">
+                <p class="text-xs font-bold text-indigo-700 tracking-wider mb-1">エッセイ攻略アドバイス</p>
+                <p id="tip-explanation-text" class="text-sm text-slate-700 leading-relaxed font-medium">
+                    これらの単語は Task 1・Task 2 のどちらでも使いやすい重要表現です。
+                </p>
+            </div>
+
+            <!-- シャドーイング練習リスト -->
+            <div class="space-y-3" id="tip-sentences-container">
+                <!-- JavaScriptで動的生成されます -->
+            </div>
+        </section>
+
         <!-- ミニチャレンジ（作文） -->
         <section class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-2xl p-6 md:p-8 shadow-md relative overflow-hidden">
             <div class="absolute -right-10 -bottom-10 opacity-10">
@@ -182,7 +212,7 @@
                 </span>
                 
                 <h2 class="text-2xl font-bold mt-3 mb-2 flex items-center gap-2">
-                    <i data-lucide="pen-tool" class="text-indigo-400"></i>
+                    <i data-lucide="clipboard-signature" class="text-indigo-400"></i>
                     英語を作ってみましょう！
                 </h2>
                 
@@ -264,7 +294,7 @@
 
     <!-- JavaScript ロジック -->
     <script>
-        // 初期のデータ構造（Day 1）
+        // 初期のデータ構造（Day 1用のフォールバックも包含）
         let appData = {
             date: "IELTS 6.5 Vocabulary (5 Words)",
             words: [
@@ -316,6 +346,13 @@
                 { word: "sustain", pos: "動詞", meaning: "維持する" },
                 { word: "diverse", pos: "形容詞", meaning: "多様な" }
             ],
+            writingTip: {
+                explanation: "sustain, conventional, significant などの語彙は、エッセイ内の理由説明や具体例の提示に重宝します。論理構造を明快にする例文を学びましょう。",
+                sentences: [
+                    "The following example illustrates a conventional approach.",
+                    "Sustaining this rate of growth is significantly difficult for developing nations."
+                ]
+            },
             challenge: {
                 prompt: "教育への投資は、長期的な経済成長を維持するのに役立つ。",
                 model: "Investing in education helps to sustain long-term economic growth.",
@@ -353,7 +390,7 @@ Mini Challenge:
 
 「教育への投資は、長期的な経済成長を維持するのに役立つ。」`;
 
-        // マークダウン形式を含んだDay 9のリアルなテキスト
+        // マークダウン形式を含んだDay 9
         const day9Text = `IELTS 6.5 Vocabulary (Day 9)
 
 #### 1. **Allocate** *(verb)* *(Note: already used ადრე? We must avoid repeats.)*
@@ -422,9 +459,46 @@ Let's use **Allocate** was used on Day 1, so instead:
 
 英訳してみましょう。
 
-**「効率的な公共交通機関は、自動車に代わる選択肢となり、環境に良い影響を与える可能性がある。」**
+**「効率的な公共交通機関は、自動車に代わる選択肢となり、環境に良い影響を与える可能性がある。」**`;
 
-I noticed you haven’t viewed this scheduled task in a while. Would you like me to keep it running?`;
+        // Day 16データ
+        const day16Text = `IELTS 6.5 Vocabulary (Day 16)
+1. Allocate and mitigate have been covered previously, so here are five new words.
+1. Illustrate (verb)
+Meaning: to explain or make something clear by giving examples
+Example: The professor illustrated the concept with several real-world examples.
+日本語: その教授は実社会のいくつかの例を用いて、その概念をわかりやすく説明した。
+2. Widespread (adjective)
+Meaning: existing or happening over a large area or among many people
+Example: Remote working has become widespread in many industries.
+日本語: リモートワークは多くの業界で広く普及している。
+3. Compromise (noun / verb)
+Meaning: an agreement in which each side gives up something; to reach such an agreement
+Example: Both sides agreed to compromise after several hours of negotiation.
+日本語: 数時間にわたる交渉の末、双方は妥協することに合意した。
+4. Allocate and enhance were used before, so today's new word:
+4. Regardless (adverb)
+Meaning: without being affected by a particular situation or condition
+Example: Everyone should have access to education regardless of their financial background.
+日本語: 経済的背景にかかわらず、誰もが教育を受ける機会を持つべきである。
+5. Sufficient (adjective)
+Meaning: enough for a particular purpose
+Example: Many students do not get sufficient sleep before examinations.
+日本語: 多くの学生は試験前に十分な睡眠を取れていない。
+Quick Review
+WordPart of Speech日本語illustrateverb例を挙げて説明するwidespreadadjective広く普及した、広範囲にわたるcompromisenoun / verb妥協（する）regardlessadverb～に関係なくsufficientadjective十分な
+IELTS Writing Tip
+These words are especially useful in Task 2 essays because they help you explain ideas clearly and discuss social issues.
+
+The following example illustrates this point.
+This practice has become widespread in recent years.
+Both governments need to compromise to reach an agreement.
+Everyone deserves equal opportunities, regardless of their background.
+There is sufficient evidence to support this argument.
+Mini Challenge
+Translate the following sentence into English:
+「経済的背景に関係なく、すべての子どもが十分な教育を受けられるようにすることが重要である。」
+Hint: Use regardless, sufficient, and education.`;
 
         // 音声エンジン関連
         const synth = window.speechSynthesis;
@@ -460,12 +534,14 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
             renderCards(data.words);
             renderTable(data.words, data.quickReview);
             renderChallenge(data.challenge);
+            renderWritingTip(data.writingTip);
             lucide.createIcons();
         }
 
         // 単語カードの描画
         function renderCards(words) {
             const container = document.getElementById("cards-container");
+            if (!container) return;
             container.innerHTML = "";
 
             words.forEach((w, index) => {
@@ -539,6 +615,7 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
         // クイックレビュー（テーブル）の描画
         function renderTable(words, reviews) {
             const tbody = document.getElementById("review-table-body");
+            if (!tbody) return;
             tbody.innerHTML = "";
 
             words.forEach((w) => {
@@ -565,106 +642,243 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
 
         // ミニチャレンジの描画
         function renderChallenge(challenge) {
-            document.getElementById("challenge-japanese-prompt").textContent = `「${challenge.prompt}」`;
-            document.getElementById("hint-text").innerHTML = `ヒント: <span class="bg-indigo-800 px-2 py-0.5 rounded text-indigo-300 font-semibold">${challenge.hintWord}</span> を使ってみましょう。`;
-            document.getElementById("model-answer-text").textContent = challenge.model;
-            document.getElementById("model-translation-text").textContent = `(${challenge.prompt})`;
+            const promptEl = document.getElementById("challenge-japanese-prompt");
+            const hintEl = document.getElementById("hint-text");
+            const modelAnswerEl = document.getElementById("model-answer-text");
+            const modelTranslationEl = document.getElementById("model-translation-text");
+            const userAnswerEl = document.getElementById("user-answer");
+            const resultBoxEl = document.getElementById("result-box");
 
-            document.getElementById("user-answer").value = "";
-            document.getElementById("result-box").classList.add("hidden");
+            if (promptEl) promptEl.textContent = `「${challenge.prompt}」`;
+            if (hintEl) hintEl.innerHTML = `ヒント: <span class="bg-indigo-800 px-2 py-0.5 rounded text-indigo-300 font-semibold">${challenge.hintWord}</span> を使ってみましょう。`;
+            if (modelAnswerEl) modelAnswerEl.textContent = challenge.model;
+            if (modelTranslationEl) modelTranslationEl.textContent = `(${challenge.prompt})`;
+
+            if (userAnswerEl) userAnswerEl.value = "";
+            if (resultBoxEl) resultBoxEl.classList.add("hidden");
+        }
+
+        // 単語キーワードの検出・ハイライト装飾関数
+        function highlightKeywords(sentence, words) {
+            let highlighted = sentence;
+            words.forEach(w => {
+                const baseWord = w.word.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+                // ターゲット単語、複数形、過去形、進行形、副詞形などを検知する正規表現
+                const regex = new RegExp(`\\b(${baseWord})(s|es|d|ed|ing|ly)?\\b`, 'gi');
+                highlighted = highlighted.replace(regex, '<strong class="text-indigo-600 font-extrabold">$1$2</strong>');
+            });
+            return highlighted;
+        }
+
+        // Writing Tip セクションの描画
+        function renderWritingTip(tip) {
+            const expText = document.getElementById("tip-explanation-text");
+            if (expText) expText.textContent = tip.explanation;
+
+            const container = document.getElementById("tip-sentences-container");
+            if (!container) return;
+            container.innerHTML = "";
+
+            if (!tip.sentences || tip.sentences.length === 0) {
+                container.innerHTML = `
+                    <p class="text-sm text-slate-400 italic text-center py-4">
+                        今日のWriting Tip例文はありません。
+                    </p>
+                `;
+                return;
+            }
+
+            tip.sentences.forEach((sentence, idx) => {
+                const item = document.createElement("div");
+                item.className = "flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-slate-50 hover:bg-slate-100/80 border border-slate-100 rounded-xl transition duration-200 group";
+                
+                // ターゲット英単語を太字強調（HTMLタグ化）して表示に反映
+                const highlightedHTML = highlightKeywords(sentence, appData.words);
+
+                item.innerHTML = `
+                    <div class="space-y-1 flex-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs bg-indigo-100 text-indigo-700 font-semibold px-2 py-0.5 rounded-md">例文 ${idx + 1}</span>
+                        </div>
+                        <p class="text-slate-800 font-semibold text-sm sm:text-base tracking-wide leading-relaxed">
+                            <span id="tip-text-${idx}" class="transition duration-300">${highlightedHTML}</span>
+                        </p>
+                    </div>
+                    
+                    <div class="flex gap-2 self-end sm:self-auto">
+                        <!-- 目隠しトグルボタン -->
+                        <button onclick="toggleTipVisibility(${idx})" class="p-2 bg-white hover:bg-slate-100 text-slate-500 rounded-lg border border-slate-200 text-xs font-semibold flex items-center gap-1 transition shadow-sm" id="tip-eye-btn-${idx}">
+                            <i data-lucide="eye" class="w-4 h-4" id="tip-eye-icon-${idx}"></i>
+                            <span>隠す</span>
+                        </button>
+                        <!-- 音声再生ボタン (読み上げにはHTMLタグ無しの生のsentenceを使用) -->
+                        <button onclick="speakText('${sentence.replace(/'/g, "\\'")}', 'en-US', 'tip-text-${idx}')" class="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1 transition shadow-sm">
+                            <i data-lucide="volume-2" class="w-4 h-4"></i>
+                            <span>聴く</span>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
+        // Writing Tip 例文の目隠しトグル処理
+        function toggleTipVisibility(idx) {
+            const textSpan = document.getElementById(`tip-text-${idx}`);
+            const eyeIcon = document.getElementById(`tip-eye-icon-${idx}`);
+            const btnText = document.querySelector(`#tip-eye-btn-${idx} span`);
+
+            if (!textSpan || !eyeIcon || !btnText) return;
+
+            if (textSpan.classList.contains("blur-sm")) {
+                textSpan.classList.remove("blur-sm", "select-none");
+                eyeIcon.setAttribute("data-lucide", "eye");
+                btnText.textContent = "隠す";
+            } else {
+                textSpan.classList.add("blur-sm", "select-none");
+                eyeIcon.setAttribute("data-lucide", "eye-off");
+                btnText.textContent = "表示";
+            }
+            lucide.createIcons();
         }
 
         // イベント設定
         function setupEventListeners() {
-            // アコーディオンの開閉
             const toggleBtn = document.getElementById("toggle-input-btn");
             const inputArea = document.getElementById("input-area");
             const inputArrow = document.getElementById("input-arrow");
 
-            toggleBtn.addEventListener("click", () => {
-                inputArea.classList.toggle("hidden");
-                inputArrow.classList.toggle("rotate-180");
-            });
-
-            inputArea.classList.add("hidden");
+            if (toggleBtn && inputArea && inputArrow) {
+                toggleBtn.addEventListener("click", () => {
+                    inputArea.classList.toggle("hidden");
+                    inputArrow.classList.toggle("rotate-180");
+                });
+            }
 
             // 前のテキストを消すクリアボタンの処理
-            document.getElementById("clear-text-btn").addEventListener("click", () => {
-                const rawInput = document.getElementById("raw-text-input");
-                rawInput.value = "";
-                rawInput.focus();
-                showToast("入力をクリアしました。新しいテキストを貼り付けてください。", "trash-2");
-            });
+            const clearBtn = document.getElementById("clear-text-btn");
+            if (clearBtn) {
+                clearBtn.addEventListener("click", () => {
+                    const rawInput = document.getElementById("raw-text-input");
+                    if (rawInput) {
+                        rawInput.value = "";
+                        rawInput.focus();
+                    }
+                    showToast("入力をクリアしました。新しいテキストを貼り付けてください。", "trash-2");
+                });
+            }
 
-            // Day 9 のテストデータ読み込み
-            document.getElementById("load-day9-btn").addEventListener("click", () => {
-                document.getElementById("raw-text-input").value = day9Text;
-                showToast("Day 9 のテスト用テキストを入力欄にセットしました！", "copy");
-                // 入力エリアを開く
-                inputArea.classList.remove("hidden");
-                inputArrow.classList.add("rotate-180");
-            });
+            // Day 16 テストデータの読み込み
+            const loadDay16Btn = document.getElementById("load-day16-btn");
+            if (loadDay16Btn) {
+                loadDay16Btn.addEventListener("click", () => {
+                    const rawInput = document.getElementById("raw-text-input");
+                    if (rawInput) rawInput.value = day16Text;
+                    showToast("Day 16 の学習データを入力欄にセットしました！", "copy");
+                    if (inputArea) inputArea.classList.remove("hidden");
+                    if (inputArrow) inputArrow.classList.add("rotate-180");
+                });
+            }
 
-            // デフォルトデータ読み込み
-            document.getElementById("load-default-btn").addEventListener("click", () => {
-                document.getElementById("raw-text-input").value = defaultRawText;
-                showToast("デフォルトデータを入力欄にセットしました", "info");
-            });
+            // Day 9 テストデータの読み込み
+            const loadDay9Btn = document.getElementById("load-day9-btn");
+            if (loadDay9Btn) {
+                loadDay9Btn.addEventListener("click", () => {
+                    const rawInput = document.getElementById("raw-text-input");
+                    if (rawInput) rawInput.value = day9Text;
+                    showToast("Day 9 の学習データを入力欄にセットしました！", "copy");
+                    if (inputArea) inputArea.classList.remove("hidden");
+                    if (inputArrow) inputArrow.classList.add("rotate-180");
+                });
+            }
+
+            // デフォルトデータ読み込み（エラー防止のガード追加 & 要素の復元対応）
+            const loadDefaultBtn = document.getElementById("load-default-btn");
+            if (loadDefaultBtn) {
+                loadDefaultBtn.addEventListener("click", () => {
+                    const rawInput = document.getElementById("raw-text-input");
+                    if (rawInput) rawInput.value = defaultRawText;
+                    showToast("デフォルトデータを入力欄にセットしました", "info");
+                });
+            }
 
             // データ更新
-            document.getElementById("process-text-btn").addEventListener("click", () => {
-                const text = document.getElementById("raw-text-input").value.trim();
-                
-                if (!text) {
-                    showToast("テキストが入力されていません。", "alert-circle");
-                    return;
-                }
+            const processTextBtn = document.getElementById("process-text-btn");
+            if (processTextBtn) {
+                processTextBtn.addEventListener("click", () => {
+                    const rawInput = document.getElementById("raw-text-input");
+                    const text = rawInput ? rawInput.value.trim() : "";
+                    
+                    if (!text) {
+                        showToast("テキストが入力されていません。", "alert-circle");
+                        return;
+                    }
 
-                const parsed = parseRawText(text);
-                
-                if (parsed) {
-                    appData = parsed;
-                    renderApp(appData);
-                    showToast("単語データを新しく更新しました！", "check-circle");
-                    inputArea.classList.add("hidden");
-                    inputArrow.classList.remove("rotate-180");
-                } else {
-                    showToast("テキストの解析に失敗しました。フォーマットを確認してください。", "alert-triangle");
-                }
-            });
+                    const parsed = parseRawText(text);
+                    
+                    if (parsed) {
+                        appData = parsed;
+                        renderApp(appData);
+                        showToast("単語データを新しく更新しました！", "check-circle");
+                        if (inputArea) inputArea.classList.add("hidden");
+                        if (inputArrow) inputArrow.classList.remove("rotate-180");
+                    } else {
+                        showToast("テキストの解析に失敗しました。フォーマットを確認してください。", "alert-triangle");
+                    }
+                });
+            }
 
             // 解答チェック
-            document.getElementById("submit-answer-btn").addEventListener("click", () => {
-                checkAnswer();
-            });
+            const submitAnswerBtn = document.getElementById("submit-answer-btn");
+            if (submitAnswerBtn) {
+                submitAnswerBtn.addEventListener("click", () => {
+                    checkAnswer();
+                });
+            }
 
             // 最初の1文字ヒント
-            document.getElementById("show-hint-btn").addEventListener("click", () => {
-                const model = appData.challenge.model.trim();
-                showToast(`最初のヒント: "${model.substring(0, 3)}..."`, "help-circle");
-            });
+            const showHintBtn = document.getElementById("show-hint-btn");
+            if (showHintBtn) {
+                showHintBtn.addEventListener("click", () => {
+                    const model = appData.challenge.model.trim();
+                    showToast(`最初のヒント: "${model.substring(0, 3)}..."`, "help-circle");
+                });
+            }
 
             // 模範解答の読み上げ
-            document.getElementById("play-model-ans-btn").addEventListener("click", () => {
-                speakText(appData.challenge.model, "en-US");
-            });
+            const playModelAnsBtn = document.getElementById("play-model-ans-btn");
+            if (playModelAnsBtn) {
+                playModelAnsBtn.addEventListener("click", () => {
+                    speakText(appData.challenge.model, "en-US");
+                });
+            }
 
-            // === オートプレイ（連続再生）の制御イベント ===
-            document.getElementById("autoplay-play-btn").addEventListener("click", () => {
-                if (isAutoplayPaused) {
-                    resumeAutoplay();
-                } else {
-                    startAutoplay();
-                }
-            });
+            // === オートプレイの制御イベント ===
+            const playBtn = document.getElementById("autoplay-play-btn");
+            if (playBtn) {
+                playBtn.addEventListener("click", () => {
+                    if (isAutoplayPaused) {
+                        resumeAutoplay();
+                    } else {
+                        startAutoplay();
+                    }
+                });
+            }
 
-            document.getElementById("autoplay-pause-btn").addEventListener("click", () => {
-                pauseAutoplay();
-            });
+            const pauseBtn = document.getElementById("autoplay-pause-btn");
+            if (pauseBtn) {
+                pauseBtn.addEventListener("click", () => {
+                    pauseAutoplay();
+                });
+            }
 
-            document.getElementById("autoplay-stop-btn").addEventListener("click", () => {
-                stopAutoplay();
-            });
+            const stopBtn = document.getElementById("autoplay-stop-btn");
+            if (stopBtn) {
+                stopBtn.addEventListener("click", () => {
+                    stopAutoplay();
+                });
+            }
         }
 
         // --- 音声読み上げロジック (Web Speech API) ---
@@ -726,7 +940,7 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
 
             autoplayQueue = [];
 
-            // 1. 【予習フェーズ】5つの単語・日本語訳をテンポよくすべて読み上げ
+            // 1. 【予習フェーズ】5つの単語・日本語訳をテンポよくすべて読み上げ (英 ➔ 日)
             appData.words.forEach((w, cardIndex) => {
                 const reviewItem = appData.quickReview.find(r => r.word.toLowerCase() === w.word.toLowerCase());
                 const jpMeaning = reviewItem ? reviewItem.meaning : w.japanese;
@@ -749,7 +963,7 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
                 });
             });
 
-            // 2. 【詳細フェーズ】各単語の詳細 (単語 ➔ 定義 ➔ 日本語 ➔ 例文) をじっくり進める
+            // 2. 【詳細フェーズ】各単語の詳細 (単語 ➔ 日本語訳 ➔ 例文) をじっくり進める
             appData.words.forEach((w, cardIndex) => {
                 autoplayQueue.push({
                     text: w.word,
@@ -758,14 +972,6 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
                     cardId: `word-card-${cardIndex}`,
                     label: `【詳細学習】単語 ${cardIndex + 1}/5: ${w.word}`,
                     rate: 0.9
-                });
-                autoplayQueue.push({
-                    text: w.meaning,
-                    lang: "en-US",
-                    elementId: `card-meaning-text-${cardIndex}`,
-                    cardId: `word-card-${cardIndex}`,
-                    label: `【詳細学習】定義 ${cardIndex + 1}/5`,
-                    rate: 0.95
                 });
                 autoplayQueue.push({
                     text: w.japanese,
@@ -790,11 +996,15 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
             isAutoplayPaused = false;
 
             // UI変更
-            document.getElementById("autoplay-status-bar").classList.remove("hidden");
-            document.getElementById("autoplay-play-btn").classList.add("hidden");
-            document.getElementById("autoplay-pause-btn").classList.remove("hidden");
+            const statusbar = document.getElementById("autoplay-status-bar");
+            const playBtn = document.getElementById("autoplay-play-btn");
+            const pauseBtn = document.getElementById("autoplay-pause-btn");
+            
+            if (statusbar) statusbar.classList.remove("hidden");
+            if (playBtn) playBtn.classList.add("hidden");
+            if (pauseBtn) pauseBtn.classList.remove("hidden");
 
-            showToast("5単語の一気予習からオートプレイをスタートします！", "play");
+            showToast("5単語のスピード予習からスタートします！", "play");
             playNextInQueue();
         }
 
@@ -877,9 +1087,13 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
             synth.pause();
 
             // UI変更
-            document.getElementById("autoplay-play-btn").classList.remove("hidden");
-            document.getElementById("autoplay-play-btn").innerHTML = `<i data-lucide="play" class="w-4 h-4 fill-emerald-700"></i> 再開する`;
-            document.getElementById("autoplay-pause-btn").classList.add("hidden");
+            const playBtn = document.getElementById("autoplay-play-btn");
+            const pauseBtn = document.getElementById("autoplay-pause-btn");
+            if (playBtn) {
+                playBtn.classList.remove("hidden");
+                playBtn.innerHTML = `<i data-lucide="play" class="w-4 h-4 fill-emerald-700"></i> 再開する`;
+            }
+            if (pauseBtn) pauseBtn.classList.add("hidden");
             lucide.createIcons();
 
             showToast("連続再生を一時停止しました", "pause");
@@ -892,8 +1106,10 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
             isAutoplayPaused = false;
             
             // UI変更
-            document.getElementById("autoplay-play-btn").classList.add("hidden");
-            document.getElementById("autoplay-pause-btn").classList.remove("hidden");
+            const playBtn = document.getElementById("autoplay-play-btn");
+            const pauseBtn = document.getElementById("autoplay-pause-btn");
+            if (playBtn) playBtn.classList.add("hidden");
+            if (pauseBtn) pauseBtn.classList.remove("hidden");
 
             showToast("連続再生を再開します", "play");
             
@@ -920,24 +1136,32 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
             });
 
             // UIを元に戻す
-            document.getElementById("autoplay-status-bar").classList.add("hidden");
+            const statusbar = document.getElementById("autoplay-status-bar");
             const playBtn = document.getElementById("autoplay-play-btn");
-            playBtn.classList.remove("hidden");
-            playBtn.innerHTML = `<i data-lucide="play" class="w-4 h-4 fill-emerald-700"></i> 連続再生スタート`;
-            document.getElementById("autoplay-pause-btn").classList.add("hidden");
+            const pauseBtn = document.getElementById("autoplay-pause-btn");
+            
+            if (statusbar) statusbar.classList.add("hidden");
+            if (playBtn) {
+                playBtn.classList.remove("hidden");
+                playBtn.innerHTML = `<i data-lucide="play" class="w-4 h-4 fill-emerald-700"></i> 連続再生スタート`;
+            }
+            if (pauseBtn) pauseBtn.classList.add("hidden");
             lucide.createIcons();
         }
 
         // オートプレイ時の進捗バーとラベル表示更新
         function updateAutoplayUI(current) {
             const progress = ((autoplayIndex) / autoplayQueue.length) * 100;
+            const currentStepEl = document.getElementById("autoplay-current-step");
+            const percentageEl = document.getElementById("autoplay-percentage");
+            const progressIndicatorEl = document.getElementById("autoplay-progress-indicator");
             
-            document.getElementById("autoplay-current-step").textContent = `再生中: ${current.label}`;
-            document.getElementById("autoplay-percentage").textContent = `${Math.round(progress)}%`;
-            document.getElementById("autoplay-progress-indicator").style.width = `${progress}%`;
+            if (currentStepEl) currentStepEl.textContent = `再生中: ${current.label}`;
+            if (percentageEl) percentageEl.textContent = `${Math.round(progress)}%`;
+            if (progressIndicatorEl) progressIndicatorEl.style.width = `${progress}%`;
         }
 
-        // --- マークダウン記法＆重複対応の極限パーサー ---
+        // --- マークダウン記法＆結合テキスト対応のパーサー ---
         function parseRawText(text) {
             try {
                 // マークダウンから記号を剥ぎ取るヘルパー
@@ -951,13 +1175,13 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
                 const lines = text.split('\n').map(line => line.trim());
                 const words = [];
                 let quickReview = [];
+                let writingTip = { explanation: "エッセイで使いやすい重要語彙の例文をチェックしましょう。", sentences: [] };
                 let challenge = { prompt: "", model: "", hintWord: "" };
 
                 // 1. 各単語ブロックの抽出
                 for (let i = 0; i < lines.length; i++) {
                     const line = lines[i];
                     
-                    // 「1. Implication (noun)」や「#### 1. **Implication** *(noun)*」などに幅広くヒットする正規表現
                     const headerMatch = line.match(/^(?:#+\s*)?([1-5])\.\s*\*?\*?([A-Za-z\-]+)\*?\*?\s*(?:\*?\s*\(([^)]+)\)\*?)?/i);
                     
                     if (headerMatch) {
@@ -965,16 +1189,16 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
                         let rawWord = headerMatch[2];
                         let rawPos = headerMatch[3] || "";
 
-                        // 重複・取り消し対象の単語（Day 9の「Allocate」のような重複回避用ダミー行）を検出するガード
-                        // もし行内、もしくは直後の文脈に "avoid repeats" や "already used" が入っていたらノイズとしてスキップ
+                        // 重複・取り消し対象の単語を検出するガード
                         const fullLineContext = line + (lines[i + 1] || "") + (lines[i + 2] || "");
                         if (fullLineContext.toLowerCase().includes("avoid repeats") || 
                             fullLineContext.toLowerCase().includes("already used") ||
+                            fullLineContext.toLowerCase().includes("been covered previously") ||
+                            fullLineContext.toLowerCase().includes("used before") ||
                             fullLineContext.toLowerCase().includes("so instead")) {
-                            continue; // このインデックスはダミーなので読み飛ばす
+                            continue;
                         }
 
-                        // 各パーツをクリーンアップ
                         const word = cleanMD(rawWord);
                         const pos = cleanMD(rawPos).replace(/[()]/g, "");
 
@@ -982,12 +1206,10 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
                         let example = "";
                         let japanese = "";
 
-                        // 次の見出し、または次の単語番号が出てくる直前までを走査
                         for (let j = 1; j <= 8; j++) {
                             const nextLine = lines[i + j];
                             if (nextLine === undefined) break;
 
-                            // 次の単語ブロック開始にぶつかったらスキャン終了
                             if (nextLine.match(/^(?:#+\s*)?[1-5]\.\s*/)) {
                                 break;
                             }
@@ -1004,7 +1226,6 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
                         }
 
                         if (word && meaning && example && japanese) {
-                            // 重複が発生したら後方の正しいデータで上書き
                             const existingIdx = words.findIndex(w => w.id === indexNum);
                             const wordObj = { id: indexNum, word, pos, meaning, example, japanese };
                             if (existingIdx !== -1) {
@@ -1016,10 +1237,9 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
                     }
                 }
 
-                // IDの昇順にソートしてカードのインデックスを確定
                 words.sort((a, b) => a.id - b.id);
 
-                // 2. クイックレビュー（通常テキスト & マークダウンテーブル対応）
+                // 2. クイックレビュー（マークダウンテーブル＆結合プレーンテキスト対応）
                 let reviewSectionStarted = false;
                 for (let i = 0; i < lines.length; i++) {
                     const line = lines[i].toLowerCase();
@@ -1028,28 +1248,24 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
                         continue;
                     }
                     if (reviewSectionStarted) {
-                        // 次のセクションに突入した場合は停止
-                        if (line.includes("mini challenge") || line.includes("英訳してみましょう") || line.includes("writing tip")) {
+                        if (line.includes("mini challenge") || line.includes("英訳してみましょう") || line.includes("writing tip") || line.includes("translate the following")) {
                             break;
                         }
 
                         const cleanedLine = cleanMD(lines[i]);
+                        if (!cleanedLine) continue;
                         
-                        // マークダウンのテーブル記法「| word | part of speech | ... |」にマッチ
+                        // A. マークダウンのテーブル記法
                         if (cleanedLine.startsWith("|") && !cleanedLine.includes("---")) {
                             const cells = cleanedLine.split("|").map(cell => cell.trim()).filter(cell => cell !== "");
-                            
-                            // ヘッダー行をスキップ
                             if (cells[0].toLowerCase().includes("word") || cells[1]?.toLowerCase().includes("speech")) {
                                 continue;
                             }
-                            
                             if (cells.length >= 3) {
                                 const tblWord = cleanMD(cells[0]);
                                 let tblPos = cleanMD(cells[1]);
                                 const tblMeaning = cleanMD(cells[2]);
 
-                                // 英語表記の品詞を日本語にマッピング
                                 if (tblPos.toLowerCase().includes("noun")) tblPos = "名詞";
                                 else if (tblPos.toLowerCase().includes("verb")) tblPos = "動詞";
                                 else if (tblPos.toLowerCase().includes("adjective")) tblPos = "形容詞";
@@ -1061,23 +1277,24 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
                                 }
                             }
                         } 
-                        // テーブルではなく、通常のテキスト形式で書かれていた場合の旧来の検出
-                        else if (cleanedLine && !cleanedLine.startsWith("|")) {
+                        // B. プレーンテキストの解析
+                        else if (!cleanedLine.startsWith("|") && !cleanedLine.includes("WordPart of Speech")) {
                             for (let w of words) {
                                 const lowerWord = w.word.toLowerCase();
                                 if (cleanedLine.toLowerCase().startsWith(lowerWord)) {
                                     const rest = cleanedLine.substring(lowerWord.length).trim();
-                                    const posMatch = rest.match(/^(動詞|形容詞|名詞|副詞|noun|verb|adjective|adverb)/i);
+                                    const posMatch = rest.match(/^(?:noun\s*\/\s*verb|noun\s*\/\s*adjective|noun|verb|adjective|adverb|動詞|形容詞|名詞|副詞)/i);
                                     if (posMatch) {
-                                        const posText = rest.match(/^[A-Za-z\s\/ぁ-んァ-ヶ一-龠]+/)[0].trim();
-                                        const meaning = rest.substring(posText.length).trim();
-                                        let displayPos = posText;
+                                        const matchedPosText = posMatch[0];
+                                        const meaning = rest.substring(matchedPosText.length).trim();
+                                        
+                                        let displayPos = matchedPosText;
                                         if (displayPos.toLowerCase().includes("noun")) displayPos = "名詞";
                                         else if (displayPos.toLowerCase().includes("verb")) displayPos = "動詞";
                                         else if (displayPos.toLowerCase().includes("adjective")) displayPos = "形容詞";
                                         else if (displayPos.toLowerCase().includes("adverb")) displayPos = "副詞";
 
-                                        quickReview.push({ word: w.word, pos: displayPos, meaning });
+                                        quickReview.push({ word: w.word, pos: displayPos, meaning: meaning });
                                     }
                                 }
                             }
@@ -1085,7 +1302,7 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
                     }
                 }
 
-                // クイックレビューが失敗した時のセーフガード
+                // クイックレビューが失敗した時の頑強なセーフガード
                 if (quickReview.length === 0) {
                     quickReview = words.map(w => {
                         let jpPos = w.pos;
@@ -1101,10 +1318,51 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
                     });
                 }
 
-                // 3. ミニチャレンジの日本語問題抽出
+                // 3. IELTS Writing Tipの抽出
+                let tipSectionStarted = false;
                 for (let i = 0; i < lines.length; i++) {
                     const line = lines[i];
-                    if (line.includes("Mini Challenge") || line.includes("英訳してみましょう") || line.includes("次の英文")) {
+                    if (line.toLowerCase().includes("writing tip")) {
+                        tipSectionStarted = true;
+                        
+                        // 次の数行から説明テキストを検出
+                        for (let j = 1; j <= 3; j++) {
+                            const nextL = lines[i + j];
+                            if (nextL && !nextL.startsWith("*") && !nextL.startsWith("-") && !nextL.startsWith("|") && !nextL.toLowerCase().includes("mini challenge")) {
+                                writingTip.explanation = cleanMD(nextL);
+                                break;
+                            }
+                        }
+                        continue;
+                    }
+                    
+                    if (tipSectionStarted) {
+                        // ミニチャレンジ、またはシステムメッセージに入ったら打ち切り
+                        if (line.toLowerCase().includes("mini challenge") || line.includes("英訳してみましょう") || line.includes("translate the following") || line.includes("I noticed you haven")) {
+                            break;
+                        }
+
+                        // 英文例文（アスタリスク「*」やプレーンテキストで、英語の大文字から始まってピリオドで終わる文）を検出
+                        const cleanedSentence = cleanMD(line);
+                        if (cleanedSentence && cleanedSentence.match(/^[A-Z][a-zA-Z\s,.'"-]+[.?!]$/)) {
+                            // 既にキューに入っていないか確認
+                            if (!writingTip.sentences.includes(cleanedSentence)) {
+                                writingTip.sentences.push(cleanedSentence);
+                            }
+                        }
+                    }
+                }
+
+                // Writing Tip がうまくパースできなかった場合の自動生成フォールバック
+                if (writingTip.sentences.length === 0 && words.length > 0) {
+                    writingTip.explanation = "今日紹介したエッセイ攻略ボキャブラリーを積極的に作文に取り入れましょう。";
+                    writingTip.sentences = words.slice(0, 2).map(w => w.example);
+                }
+
+                // 4. ミニチャレンジの日本語問題抽出
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    if (line.includes("Mini Challenge") || line.includes("英訳してみましょう") || line.includes("次の英文") || line.toLowerCase().includes("translate the following")) {
                         for (let j = 1; j <= 5; j++) {
                             const nextLine = lines[i + j] || "";
                             const cleanedNext = cleanMD(nextLine);
@@ -1119,34 +1377,32 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
 
                 // お題に応じた模範解答とヒントの設定
                 if (challenge.prompt) {
-                    // Day 9 お題
-                    if (challenge.prompt.includes("公共交通機関") || challenge.prompt.includes("自動車に代わる")) {
+                    if (challenge.prompt.includes("経済的背景に関係なく") || challenge.prompt.includes("十分な教育")) {
+                        challenge.model = "It is important to ensure that all children have access to sufficient education regardless of their financial background.";
+                        challenge.hintWord = "regardless";
+                    } else if (challenge.prompt.includes("公共交通機関") || challenge.prompt.includes("自動車に代わる")) {
                         challenge.model = "Efficient public transportation can be an alternative to cars and may have a positive implication for the environment.";
                         challenge.hintWord = "efficient";
-                    } 
-                    // Day 1 お題
-                    else if (challenge.prompt.includes("教育への投資")) {
+                    } else if (challenge.prompt.includes("教育への投資")) {
                         challenge.model = "Investing in education helps to sustain long-term economic growth.";
                         challenge.hintWord = "sustain";
-                    } 
-                    // その他（自動フォールバック）
-                    else {
+                    } else {
                         if (words.length > 0) {
                             challenge.model = words[0].example;
                             challenge.hintWord = words[0].word.toLowerCase();
                         } else {
-                            challenge.model = "An alternative solution is required.";
-                            challenge.hintWord = "alternative";
+                            challenge.model = "A suitable option is required.";
+                            challenge.hintWord = "suitable";
                         }
                     }
                 } else {
-                    challenge.prompt = "効率的な公共交通機関は、自動車に代わる選択肢となり、環境に良い影響を与える可能性があります。";
-                    challenge.model = "Efficient public transportation can be an alternative to cars and may have a positive implication for the environment.";
-                    challenge.hintWord = "efficient";
+                    challenge.prompt = "経済的背景に関係なく、すべての子どもが十分な教育を受けられるようにすることが重要である。";
+                    challenge.model = "It is important to ensure that all children have access to sufficient education regardless of their financial background.";
+                    challenge.hintWord = "regardless";
                 }
 
                 if (words.length > 0) {
-                    return { date: "Daily Vocabulary Booster", words, quickReview, challenge };
+                    return { date: "Daily Vocabulary Booster", words, quickReview, writingTip, challenge };
                 }
                 return null;
             } catch (e) {
@@ -1193,68 +1449,76 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
             const statusHeader = document.getElementById("result-status-header");
             const scoreDisplay = document.getElementById("similarity-score");
             
-            resultBox.classList.remove("hidden");
-            scoreDisplay.textContent = `${score}%`;
+            if (resultBox) resultBox.classList.remove("hidden");
+            if (scoreDisplay) scoreDisplay.textContent = `${score}%`;
 
             const fbPoints = document.getElementById("feedback-points");
-            fbPoints.innerHTML = "";
+            if (fbPoints) fbPoints.innerHTML = "";
 
-            if (score >= 90) {
-                statusHeader.innerHTML = `
-                    <div class="p-2 bg-emerald-500/20 text-emerald-400 rounded-lg">
-                        <i data-lucide="sparkles" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-emerald-400 text-lg">Perfect! 素晴らしい英語表現です！</h4>
-                        <p class="text-xs text-slate-400">主要な重要単語を正しく組み合わせることができています。</p>
-                    </div>
-                `;
-                scoreDisplay.className = "font-bold text-lg text-emerald-400";
-            } else if (score >= 50) {
-                statusHeader.innerHTML = `
-                    <div class="p-2 bg-amber-500/20 text-amber-400 rounded-lg">
-                        <i data-lucide="thumbs-up" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-amber-400 text-lg">Good job! 意味は十分に伝わります！</h4>
-                        <p class="text-xs text-slate-400">重要キーワードがバッチリ入っています。さらに磨くコツ：</p>
-                    </div>
-                `;
-                scoreDisplay.className = "font-bold text-lg text-amber-400";
+            if (score >= 80) {
+                if (statusHeader) {
+                    statusHeader.innerHTML = `
+                        <div class="p-2 bg-emerald-500/20 text-emerald-400 rounded-lg">
+                            <i data-lucide="sparkles" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-emerald-400 text-lg">Perfect! 素晴らしい英語表現です！</h4>
+                            <p class="text-xs text-slate-400">主要な重要単語を正しく組み合わせることができています。</p>
+                        </div>
+                    `;
+                }
+                if (scoreDisplay) scoreDisplay.className = "font-bold text-lg text-emerald-400";
+            } else if (score >= 45) {
+                if (statusHeader) {
+                    statusHeader.innerHTML = `
+                        <div class="p-2 bg-amber-500/20 text-amber-400 rounded-lg">
+                            <i data-lucide="thumbs-up" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-amber-400 text-lg">Good job! 意味は十分に伝わります！</h4>
+                            <p class="text-xs text-slate-400">重要キーワードがしっかり入っています。さらにスコアを磨くコツ：</p>
+                        </div>
+                    `;
+                }
+                if (scoreDisplay) scoreDisplay.className = "font-bold text-lg text-amber-400";
             } else {
-                statusHeader.innerHTML = `
-                    <div class="p-2 bg-rose-500/20 text-rose-400 rounded-lg">
-                        <i data-lucide="help-circle" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-rose-300 text-lg">Keep Fighting! チャレンジしましょう！</h4>
-                        <p class="text-xs text-slate-400">模範解答をお手本にして、各重要単語の文法構造を復習してみましょう。</p>
-                    </div>
-                `;
-                scoreDisplay.className = "font-bold text-lg text-rose-400";
+                if (statusHeader) {
+                    statusHeader.innerHTML = `
+                        <div class="p-2 bg-rose-500/20 text-rose-400 rounded-lg">
+                            <i data-lucide="help-circle" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-rose-300 text-lg">Keep Fighting! チャレンジしましょう！</h4>
+                            <p class="text-xs text-slate-400">模範解答をお手本にして、各重要単語の文法構造を復習してみましょう。</p>
+                        </div>
+                    `;
+                }
+                if (scoreDisplay) scoreDisplay.className = "font-bold text-lg text-rose-400";
             }
 
-            if (modelAnswer.includes("transportation")) {
-                fbPoints.innerHTML = `
-                    <li>「効率的な公共交通機関」は <strong>"Efficient public transportation"</strong> が適切です。</li>
-                    <li>「～に代わる選択肢」は <strong>"an alternative to [名詞]"</strong> (toの後に動名詞または名詞) を用います。</li>
-                    <li>「～に影響を与える」は <strong>"have an implication for..."</strong> や <strong>"have an effect/influence on..."</strong> と書くと、Task 2 で高い評価（Collocation評価）を得られます。</li>
-                `;
-            } else if (modelAnswer.includes("sustain")) {
-                fbPoints.innerHTML = `
-                    <li>「～への投資」は <strong>"Investing in ~"</strong> または <strong>"Investment in..."</strong> です。</li>
-                    <li>「～を維持するのに役立つ」は <strong>"helps to sustain..."</strong> または <strong>"helps sustain..."</strong> と表します。</li>
-                    <li>「長期的な経済成長」は <strong>"long-term economic growth"</strong> が最適なアカデミックライティングの表現です。</li>
-                `;
-            } else {
-                fbPoints.innerHTML = `
-                    <li>解答の中でお題のターゲットワード <strong>"${appData.challenge.hintWord}"</strong> が正しく配置されているかを確認してみましょう。</li>
-                    <li>前置詞の使い分けや、名詞の単数・複数、時制に気を配ることでグラマーの正確性（GRA）スコアを上げることができます。</li>
-                `;
+            if (fbPoints) {
+                if (modelAnswer.includes("children")) {
+                    fbPoints.innerHTML = `
+                        <li>「～に関係なく」は <strong>"regardless of [名詞]"</strong> を使用します（例：regardless of their financial background）。</li>
+                        <li>「十分な教育を受けられるようにする」は <strong>"have access to sufficient education"</strong> や <strong>"receive sufficient education"</strong> がバッチリ噛み合います。</li>
+                        <li>「～することが重要である」は <strong>"It is important to [動詞の原形]"</strong> という仮主語 it の形から始めるのが極めて自然です。</li>
+                    `;
+                } else if (modelAnswer.includes("transportation")) {
+                    fbPoints.innerHTML = `
+                        <li>「効率的な公共交通機関」は <strong>"Efficient public transportation"</strong> が適切です。</li>
+                        <li>「～に代わる選択肢」は <strong>"an alternative to [名詞]"</strong> (toの後に動名詞または名詞) を用います。</li>
+                        <li>「～に影響を与える」は <strong>"have an implication for..."</strong> と書くとアカデミックなライティングになります。</li>
+                    `;
+                } else {
+                    fbPoints.innerHTML = `
+                        <li>解答の中でお題のターゲットワード <strong>"${appData.challenge.hintWord}"</strong> が正しく配置されているかを確認してみましょう。</li>
+                        <li>前置詞の使い分けや、名詞の単数・複数形、時制に気を配ることでグラマースコアをアップできます。</li>
+                    `;
+                }
             }
 
             lucide.createIcons();
-            resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            if (resultBox) resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         // トースト通知
@@ -1263,6 +1527,8 @@ I noticed you haven’t viewed this scheduled task in a while. Would you like me
             const toastMessage = document.getElementById("toast-message");
             const toastIcon = document.getElementById("toast-icon");
             
+            if (!toast || !toastMessage || !toastIcon) return;
+
             toastMessage.textContent = message;
             toastIcon.setAttribute("data-lucide", iconName);
             lucide.createIcons();
